@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../../components/Navbar'
 
 function AdminDashboard() {
   const navigate = useNavigate()
@@ -42,10 +43,7 @@ function AdminDashboard() {
       })
   }, [navigate, token])
 
-  const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
+
 
   const viaggiInCorso = viaggiOggi.filter(
     (viaggio) => viaggio.stato === 'IN_CORSO'
@@ -76,26 +74,7 @@ function AdminDashboard() {
   return (
     <div className="min-vh-100 bg-light">
 
-     <nav className="navbar navbar-dark bg-dark">
-        <div className="container">
-
-          <span className="navbar-brand">
-            Gestionale Cassoni
-          </span>
-
-          <div className="d-flex align-items-center gap-3">
-
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={logout}
-            >
-              Esci
-            </button>
-
-          </div>
-
-        </div>
-      </nav>
+    <Navbar />
 
       <main className="container py-4">
 
@@ -151,7 +130,7 @@ function AdminDashboard() {
             </h2>
 
             <p className="text-muted mb-0">
-              Da qui puoi controllare rapidamente i movimenti
+              Da qui puoi controllare i movimenti
               della giornata e la posizione dei cassoni.
             </p>
 

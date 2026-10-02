@@ -1,43 +1,15 @@
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../../components/Navbar'
 
 function Anagrafiche() {
   const navigate = useNavigate()
 
-  const nome = localStorage.getItem('nome')
-  const cognome = localStorage.getItem('cognome')
 
-  const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
 
   return (
     <div className="min-vh-100 bg-light">
 
-      <nav className="navbar navbar-dark bg-dark">
-        <div className="container">
-
-          <span className="navbar-brand">
-            Gestionale Cassoni
-          </span>
-
-          <div className="d-flex align-items-center gap-3">
-
-            <span className="text-white">
-              {nome} {cognome}
-            </span>
-
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={logout}
-            >
-              Esci
-            </button>
-
-          </div>
-
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="container py-4">
 

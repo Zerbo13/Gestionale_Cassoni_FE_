@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../../components/Navbar'
+import { FiPrinter } from "react-icons/fi";
 
 function RiepilogoViaggi() {
   const navigate = useNavigate()
@@ -24,8 +26,6 @@ function RiepilogoViaggi() {
     useState(dataOggi)
 
   const token = localStorage.getItem('token')
-  const nome = localStorage.getItem('nome')
-  const cognome = localStorage.getItem('cognome')
 
   const caricaViaggi = () => {
     fetch('http://localhost:3001/api/viaggi', {
@@ -62,10 +62,7 @@ function RiepilogoViaggi() {
     caricaViaggi()
   }, [navigate, token])
 
-  const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
+
 
   const chiudiViaggio = (id) => {
     setErrore('')
@@ -205,30 +202,7 @@ function RiepilogoViaggi() {
   return (
     <div className="min-vh-100 bg-light">
 
-      <nav className="navbar navbar-dark bg-dark no-print">
-        <div className="container">
-
-          <span className="navbar-brand">
-            Gestionale Cassoni
-          </span>
-
-          <div className="d-flex align-items-center gap-3">
-
-            <span className="text-white">
-              {nome} {cognome}
-            </span>
-
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={logout}
-            >
-              Esci
-            </button>
-
-          </div>
-
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="container py-4">
 
@@ -582,10 +556,12 @@ function RiepilogoViaggi() {
         <div className="d-flex justify-content-end mt-3 no-print">
 
           <button
-            className="btn btn-outline-dark"
+            className="btn btn-danger"
             onClick={stampa}
           >
-            🖨️ Stampa scheda
+            <FiPrinter />
+            Salva /
+             Stampa posizioni dei cassoni
           </button>
 
         </div>

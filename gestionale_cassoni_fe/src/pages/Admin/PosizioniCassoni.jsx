@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../../components/Navbar'
+import { FiPrinter } from "react-icons/fi";
+
 
 function PosizioniCassoni() {
   const navigate = useNavigate()
@@ -10,8 +13,6 @@ function PosizioniCassoni() {
   const [loading, setLoading] = useState(true)
 
   const token = localStorage.getItem('token')
-  const nome = localStorage.getItem('nome')
-  const cognome = localStorage.getItem('cognome')
 
   useEffect(() => {
     if (!token) {
@@ -75,27 +76,27 @@ function PosizioniCassoni() {
       })
   }, [navigate, token])
 
-  const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
-
   const stampa = () => {
     window.print()
   }
 
   const cassoniFiltrati = cassoni
     .filter((cassone) => {
-      const testo = ricerca.toLowerCase()
+      const testo = ricerca
+        .trim()
+        .toLowerCase()
 
       return (
         cassone.codiceCassone
           ?.toLowerCase()
           .includes(testo) ||
-        cassone.posizioneAttuale
+        cassone.tipologia
           ?.toLowerCase()
           .includes(testo) ||
         cassone.colore
+          ?.toLowerCase()
+          .includes(testo) ||
+        cassone.posizioneAttuale
           ?.toLowerCase()
           .includes(testo)
       )
@@ -108,12 +109,8 @@ function PosizioniCassoni() {
     (cassone) => cassone.attivo
   ).length
 
-  const cassoniDisattivati = cassoni.filter(
-    (cassone) => !cassone.attivo
-  ).length
-
-  const cassoniFermiCinqueGiorni = cassoni.filter(
-    (cassone) => cassone.giorniFermo >= 5
+  const cassoniFermiTreGiorni = cassoni.filter(
+    (cassone) => cassone.giorniFermo >= 3
   ).length
 
   if (loading) {
@@ -131,30 +128,7 @@ function PosizioniCassoni() {
   return (
     <div className="min-vh-100 bg-light">
 
-      <nav className="navbar navbar-dark bg-dark no-print">
-        <div className="container">
-
-          <span className="navbar-brand">
-            Gestionale Cassoni
-          </span>
-
-          <div className="d-flex align-items-center gap-3">
-
-            <span className="text-white">
-              {nome} {cognome}
-            </span>
-
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={logout}
-            >
-              Esci
-            </button>
-
-          </div>
-
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="container py-4">
 
@@ -164,28 +138,28 @@ function PosizioniCassoni() {
             className="btn btn-outline-dark"
             onClick={() => navigate('/admin')}
           >
-            📊 Dashboard
+            Dashboard
           </button>
 
           <button
             className="btn btn-outline-primary"
             onClick={() => navigate('/admin/viaggi')}
           >
-            🧾 Scheda giornaliera
+            Scheda giornaliera
           </button>
 
           <button
             className="btn btn-danger"
             onClick={() => navigate('/admin/posizioni')}
           >
-            📍 Posizione cassoni
+            Posizione cassoni
           </button>
 
           <button
             className="btn btn-outline-warning"
             onClick={() => navigate('/admin/anagrafiche')}
           >
-            📋 Anagrafiche
+            Anagrafiche
           </button>
 
         </div>
@@ -244,11 +218,11 @@ function PosizioniCassoni() {
               <div className="card-body">
 
                 <small className="text-muted">
-                  Fermi da 5 giorni
+                  Fermi da almeno 3 giorni
                 </small>
 
                 <h3 className="mb-0">
-                  {cassoniFermiCinqueGiorni}
+                  {cassoniFermiTreGiorni}
                 </h3>
 
               </div>
@@ -264,20 +238,20 @@ function PosizioniCassoni() {
 
             <div className="row mb-4 no-print">
 
-              <div className="col-md-6">
+              <div className="col-md-7">
 
                 <label className="form-label">
                   Cerca cassone
                 </label>
 
                 <input
-                  type="text"
+                  type="search"
                   className="form-control"
                   value={ricerca}
                   onChange={(e) =>
                     setRicerca(e.target.value)
                   }
-                  placeholder="Codice, colore o posizione..."
+                  placeholder="Codice, tipologia, colore o posizione..."
                 />
 
               </div>
@@ -300,6 +274,7 @@ function PosizioniCassoni() {
 
                     <tr>
                       <th>Cassone</th>
+                      <th>Tipologia</th>
                       <th>Colore</th>
                       <th>Misura</th>
                       <th>Posizione attuale</th>
@@ -322,15 +297,19 @@ function PosizioniCassoni() {
                         </td>
 
                         <td>
-                          {cassone.colore}
+                          {cassone.tipologia || '-'}
                         </td>
 
                         <td>
-                          {cassone.misura}
+                          {cassone.colore || '-'}
                         </td>
 
                         <td>
-                          {cassone.posizioneAttuale}
+                          {cassone.misura || '-'}
+                        </td>
+
+                        <td>
+                          {cassone.posizioneAttuale || '-'}
                         </td>
 
                         <td>
@@ -385,12 +364,14 @@ function PosizioniCassoni() {
 
         <div className="d-flex justify-content-end mt-3 no-print">
 
-          <button
-            className="btn btn-outline-dark"
-            onClick={stampa}
-          >
-            🖨️ Stampa posizioni
-          </button>
+         <button
+                     className="btn btn-danger"
+                     onClick={stampa}
+                   >
+                     <FiPrinter />
+                     Salva /
+                      Stampa posizioni dei cassoni
+                   </button>
 
         </div>
 

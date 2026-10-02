@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function Login() {
+  const navigate = useNavigate()
+
   const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
   const [errore, setErrore] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const navigate = useNavigate()
-
-  const handleSubmit = (e) => {
+  const login = (e) => {
     e.preventDefault()
 
     setErrore('')
@@ -27,8 +27,8 @@ function Login() {
     })
       .then((response) => {
         if (!response.ok) {
-          return response.text().then((messaggio) => {
-            throw new Error(messaggio)
+          return response.text().then((testo) => {
+            throw new Error(testo)
           })
         }
 
@@ -47,9 +47,7 @@ function Login() {
         }
       })
       .catch((error) => {
-        setErrore(
-          error.message || 'Errore durante il login'
-        )
+        setErrore(error.message)
       })
       .finally(() => {
         setLoading(false)
@@ -57,20 +55,34 @@ function Login() {
   }
 
   return (
-    <div className="container min-vh-100 d-flex justify-content-center align-items-center">
-      <div
-        className="card shadow p-4"
-        style={{
-          width: '100%',
-          maxWidth: '420px'
-        }}
-      >
-        <h2 className="text-center mb-4">
-          Gestionale Cassoni
-        </h2>
+    <div className="login-page">
 
-        <form onSubmit={handleSubmit}>
+      <div className="login-card">
+
+        <div className="text-center mb-4">
+
+          <img
+            src="/Logo.png"
+            alt="MC Trasporti - Gruppo Calafato"
+            className="login-logo"
+          />
+
+        </div>
+
+        <h1 className="h4 text-center mb-4">
+          Accesso gestionale
+        </h1>
+
+        {errore && (
+          <div className="alert alert-danger">
+            {errore}
+          </div>
+        )}
+
+        <form onSubmit={login}>
+
           <div className="mb-3">
+
             <label className="form-label">
               Nickname
             </label>
@@ -79,13 +91,16 @@ function Login() {
               type="text"
               className="form-control"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder="Inserisci nickname"
+              onChange={(e) =>
+                setNickname(e.target.value)
+              }
               required
             />
+
           </div>
 
-          <div className="mb-3">
+          <div className="mb-4">
+
             <label className="form-label">
               Password
             </label>
@@ -94,27 +109,28 @@ function Login() {
               type="password"
               className="form-control"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Inserisci password"
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
               required
             />
-          </div>
 
-          {errore && (
-            <div className="alert alert-danger">
-              {errore}
-            </div>
-          )}
+          </div>
 
           <button
             type="submit"
-            className="btn btn-primary w-100"
+            className="btn btn-primary w-100 py-2"
             disabled={loading}
           >
-            {loading ? 'Accesso...' : 'Accedi'}
+            {loading
+              ? 'Accesso...'
+              : 'Accedi'}
           </button>
+
         </form>
+
       </div>
+
     </div>
   )
 }

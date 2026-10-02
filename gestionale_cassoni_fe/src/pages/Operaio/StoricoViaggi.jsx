@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../../components/Navbar'
 
 function StoricoViaggi() {
   const navigate = useNavigate()
@@ -10,7 +11,6 @@ function StoricoViaggi() {
 
   const token = localStorage.getItem('token')
   const nome = localStorage.getItem('nome')
-  const cognome = localStorage.getItem('cognome')
 
   useEffect(() => {
     if (!token) {
@@ -68,10 +68,6 @@ function StoricoViaggi() {
       })
   }, [])
 
-  const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
 
   if (loading) {
     return (
@@ -88,30 +84,7 @@ function StoricoViaggi() {
   return (
     <div className="min-vh-100 bg-light">
 
-      <nav className="navbar navbar-dark bg-dark">
-        <div className="container">
-
-          <span className="navbar-brand">
-            Gestionale Cassoni
-          </span>
-
-          <div className="d-flex align-items-center gap-3">
-
-            <span className="text-white">
-              {nome} {cognome}
-            </span>
-
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={logout}
-            >
-              Esci
-            </button>
-
-          </div>
-
-        </div>
-      </nav>
+     <Navbar />
 
       <main className="container py-4">
 
