@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function AdminViaggi() {
+function RiepilogoViaggi() {
   const navigate = useNavigate()
 
   const [viaggi, setViaggi] = useState([])
@@ -11,12 +11,24 @@ function AdminViaggi() {
   const [ricerca, setRicerca] = useState('')
   const [filtroStato, setFiltroStato] = useState('TUTTI')
 
+  const oggi = new Date()
+
+  const dataOggi =
+    oggi.getFullYear() +
+    '-' +
+    String(oggi.getMonth() + 1).padStart(2, '0') +
+    '-' +
+    String(oggi.getDate()).padStart(2, '0')
+
+  const [dataSelezionata, setDataSelezionata] =
+    useState(dataOggi)
+
   const token = localStorage.getItem('token')
   const nome = localStorage.getItem('nome')
   const cognome = localStorage.getItem('cognome')
 
   const caricaViaggi = () => {
-    fetch('http://localhost:3001/api/viaggi/oggi', {
+    fetch('http://localhost:3001/api/viaggi', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -48,7 +60,7 @@ function AdminViaggi() {
     }
 
     caricaViaggi()
-  }, [])
+  }, [navigate, token])
 
   const logout = () => {
     localStorage.clear()
@@ -113,7 +125,28 @@ function AdminViaggi() {
       })
   }
 
-  const viaggiFiltrati = viaggi
+  const stampa = () => {
+    window.print()
+  }
+
+  const viaggiDelGiorno = viaggi.filter((viaggio) => {
+    if (!viaggio.dataOraInizio) {
+      return false
+    }
+
+    const dataViaggio = new Date(viaggio.dataOraInizio)
+
+    const dataFormattata =
+      dataViaggio.getFullYear() +
+      '-' +
+      String(dataViaggio.getMonth() + 1).padStart(2, '0') +
+      '-' +
+      String(dataViaggio.getDate()).padStart(2, '0')
+
+    return dataFormattata === dataSelezionata
+  })
+
+  const viaggiFiltrati = viaggiDelGiorno
     .filter((viaggio) => {
       if (filtroStato === 'TUTTI') {
         return true
@@ -139,17 +172,23 @@ function AdminViaggi() {
       )
     })
 
-  const viaggiInCorso = viaggi.filter(
+  const viaggiInCorso = viaggiDelGiorno.filter(
     (viaggio) => viaggio.stato === 'IN_CORSO'
   ).length
 
-  const viaggiCompletati = viaggi.filter(
+  const viaggiCompletati = viaggiDelGiorno.filter(
     (viaggio) => viaggio.stato === 'COMPLETATO'
   ).length
 
-  const viaggiAnnullati = viaggi.filter(
+  const viaggiAnnullati = viaggiDelGiorno.filter(
     (viaggio) => viaggio.stato === 'ANNULLATO'
   ).length
+
+  const dataStampabile = dataSelezionata
+    ? new Date(
+        `${dataSelezionata}T00:00:00`
+      ).toLocaleDateString('it-IT')
+    : '-'
 
   if (loading) {
     return (
@@ -166,49 +205,21 @@ function AdminViaggi() {
   return (
     <div className="min-vh-100 bg-light">
 
-      <nav className="navbar navbar-expand-lg bg-white border-bottom">
-        <div className="container py-2">
+      <nav className="navbar navbar-dark bg-dark no-print">
+        <div className="container">
 
-          <div className="d-flex flex-wrap gap-2">
-
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() => navigate('/admin')}
-            >
-              📊 Dashboard
-            </button>
-
-            <button
-              className="btn btn-dark"
-              onClick={() => navigate('/admin/viaggi')}
-            >
-              🧾 Scheda giornaliera
-            </button>
-
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() => navigate('/admin/posizioni')}
-            >
-              📍 Posizione cassoni
-            </button>
-
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() => navigate('/admin/anagrafiche')}
-            >
-              📋 Anagrafiche
-            </button>
-
-          </div>
+          <span className="navbar-brand">
+            Gestionale Cassoni
+          </span>
 
           <div className="d-flex align-items-center gap-3">
 
-            <span>
+            <span className="text-white">
               {nome} {cognome}
             </span>
 
             <button
-              className="btn btn-outline-danger btn-sm"
+              className="btn btn-danger btn-sm"
               onClick={logout}
             >
               Esci
@@ -221,12 +232,54 @@ function AdminViaggi() {
 
       <main className="container py-4">
 
-        <h1 className="h3 mb-4">
-          Scheda giornaliera
-        </h1>
+        <div className="d-flex flex-wrap gap-2 mb-4 no-print">
+
+          <button
+            className="btn btn-outline-dark"
+            onClick={() => navigate('/admin')}
+          >
+            📊 Dashboard
+          </button>
+
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('/admin/viaggi')}
+          >
+            🧾 Scheda giornaliera
+          </button>
+
+          <button
+            className="btn btn-outline-danger"
+            onClick={() => navigate('/admin/posizioni')}
+          >
+            📍 Posizione cassoni
+          </button>
+
+          <button
+            className="btn btn-outline-warning"
+            onClick={() => navigate('/admin/anagrafiche')}
+          >
+            📋 Anagrafiche
+          </button>
+
+        </div>
+
+        <div className="d-flex justify-content-between align-items-center mb-4">
+
+          <div>
+            <h1 className="h3 mb-1">
+              Scheda giornaliera
+            </h1>
+
+            <p className="text-muted mb-0">
+              Data: {dataStampabile}
+            </p>
+          </div>
+
+        </div>
 
         {errore && (
-          <div className="alert alert-danger">
+          <div className="alert alert-danger no-print">
             {errore}
           </div>
         )}
@@ -234,23 +287,29 @@ function AdminViaggi() {
         <div className="row g-3 mb-4">
 
           <div className="col-md-3">
-            <div className="card shadow-sm border-0">
+
+            <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
-                  Viaggi oggi
+                  Viaggi del giorno
                 </small>
 
                 <h3 className="mb-0">
-                  {viaggi.length}
+                  {viaggiDelGiorno.length}
                 </h3>
 
               </div>
+
             </div>
+
           </div>
 
           <div className="col-md-3">
-            <div className="card shadow-sm border-0">
+
+            <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
@@ -262,11 +321,15 @@ function AdminViaggi() {
                 </h3>
 
               </div>
+
             </div>
+
           </div>
 
           <div className="col-md-3">
-            <div className="card shadow-sm border-0">
+
+            <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
@@ -278,11 +341,15 @@ function AdminViaggi() {
                 </h3>
 
               </div>
+
             </div>
+
           </div>
 
           <div className="col-md-3">
-            <div className="card shadow-sm border-0">
+
+            <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
@@ -294,7 +361,9 @@ function AdminViaggi() {
                 </h3>
 
               </div>
+
             </div>
+
           </div>
 
         </div>
@@ -303,9 +372,26 @@ function AdminViaggi() {
 
           <div className="card-body">
 
-            <div className="row g-3 mb-4">
+            <div className="row g-3 mb-4 no-print">
 
-              <div className="col-md-8">
+              <div className="col-md-3">
+
+                <label className="form-label">
+                  Giorno
+                </label>
+
+                <input
+                  type="date"
+                  className="form-control"
+                  value={dataSelezionata}
+                  onChange={(e) =>
+                    setDataSelezionata(e.target.value)
+                  }
+                />
+
+              </div>
+
+              <div className="col-md-6">
 
                 <label className="form-label">
                   Cerca
@@ -323,7 +409,7 @@ function AdminViaggi() {
 
               </div>
 
-              <div className="col-md-4">
+              <div className="col-md-3">
 
                 <label className="form-label">
                   Stato
@@ -362,7 +448,7 @@ function AdminViaggi() {
             {viaggiFiltrati.length === 0 ? (
 
               <p className="text-muted mb-0">
-                Nessun viaggio trovato.
+                Nessun viaggio trovato per il giorno selezionato.
               </p>
 
             ) : (
@@ -372,6 +458,7 @@ function AdminViaggi() {
                 <table className="table table-hover align-middle">
 
                   <thead>
+
                     <tr>
                       <th>Ora</th>
                       <th>Operaio</th>
@@ -380,8 +467,12 @@ function AdminViaggi() {
                       <th>Partenza</th>
                       <th>Destinazione</th>
                       <th>Stato</th>
-                      <th>Azioni</th>
+
+                      <th className="no-print">
+                        Azioni
+                      </th>
                     </tr>
+
                   </thead>
 
                   <tbody>
@@ -425,6 +516,7 @@ function AdminViaggi() {
                         </td>
 
                         <td>
+
                           <span
                             className={
                               viaggio.stato === 'COMPLETATO'
@@ -436,9 +528,10 @@ function AdminViaggi() {
                           >
                             {viaggio.stato}
                           </span>
+
                         </td>
 
-                        <td>
+                        <td className="no-print">
 
                           {viaggio.stato === 'IN_CORSO' ? (
 
@@ -486,10 +579,21 @@ function AdminViaggi() {
 
         </div>
 
+        <div className="d-flex justify-content-end mt-3 no-print">
+
+          <button
+            className="btn btn-outline-dark"
+            onClick={stampa}
+          >
+            🖨️ Stampa scheda
+          </button>
+
+        </div>
+
       </main>
 
     </div>
   )
 }
 
-export default AdminViaggi
+export default RiepilogoViaggi

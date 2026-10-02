@@ -40,7 +40,7 @@ function AdminDashboard() {
       .finally(() => {
         setLoading(false)
       })
-  }, [])
+  }, [navigate, token])
 
   const logout = () => {
     localStorage.clear()
@@ -115,21 +115,21 @@ function AdminDashboard() {
             </button>
 
             <button
-              className="btn btn-outline-secondary"
+              className="btn btn-outline-primary"
               onClick={() => navigate('/admin/viaggi')}
             >
               🧾 Scheda giornaliera
             </button>
 
             <button
-              className="btn btn-outline-secondary"
+              className="btn btn-outline-danger"
               onClick={() => navigate('/admin/posizioni')}
             >
               📍 Posizione cassoni
             </button>
 
             <button
-              className="btn btn-outline-secondary"
+              className="btn btn-outline-warning"
               onClick={() => navigate('/admin/anagrafiche')}
             >
               📋 Anagrafiche
@@ -212,46 +212,7 @@ function AdminDashboard() {
 
         <div className="row g-3 mb-4">
 
-          <div className="col-lg-6">
-
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
-
-                <h4 className="mb-3">
-                  Cosa vuoi controllare?
-                </h4>
-
-                <div className="d-grid gap-2">
-
-                  <button
-                    className="btn btn-primary py-3"
-                    onClick={() => navigate('/admin/viaggi')}
-                  >
-                    🧾 Scheda giornaliera
-                  </button>
-
-                  <button
-                    className="btn btn-outline-secondary py-3"
-                    onClick={() => navigate('/admin/posizioni')}
-                  >
-                    📍 Posizione cassoni
-                  </button>
-
-                  <button
-                    className="btn btn-outline-secondary py-3"
-                    onClick={() => navigate('/admin/anagrafiche')}
-                  >
-                    📋 Anagrafiche e operai
-                  </button>
-
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-
-          <div className="col-lg-6">
+          <div className="col-lg-12">
 
             <div className="card shadow-sm h-100">
               <div className="card-body">
