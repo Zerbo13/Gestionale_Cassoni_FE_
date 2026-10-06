@@ -28,7 +28,7 @@ function RiepilogoViaggi() {
   const token = localStorage.getItem('token')
 
   const caricaViaggi = () => {
-    fetch('http://localhost:3001/api/viaggi', {
+    fetch('https://gestionale-cassoni.onrender.com/api/viaggi', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -68,7 +68,7 @@ function RiepilogoViaggi() {
     setErrore('')
 
     fetch(
-      `http://localhost:3001/api/viaggi/${id}/chiudi`,
+      `https://gestionale-cassoni.onrender.com/api/viaggi/${id}/chiudi`,
       {
         method: 'PUT',
         headers: {
@@ -97,7 +97,7 @@ function RiepilogoViaggi() {
     setErrore('')
 
     fetch(
-      `http://localhost:3001/api/viaggi/${id}/annulla`,
+      `https://gestionale-cassoni.onrender.com/api/viaggi/${id}/annulla`,
       {
         method: 'PUT',
         headers: {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://gestionale-cassoni.onrender.com/api'
 
 async function richiesta(percorso, token, opzioni = {}) {
   const response = await fetch(`${API}${percorso}`, {

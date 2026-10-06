@@ -20,7 +20,7 @@ function PosizioniCassoni() {
       return
     }
 
-    fetch('http://localhost:3001/api/cassoni', {
+    fetch('https://gestionale-cassoni.onrender.com/api/cassoni', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -38,7 +38,7 @@ function PosizioniCassoni() {
         const richiestePosizioni = listaCassoni.map(
           (cassone) =>
             fetch(
-              `http://localhost:3001/api/cassoni/${cassone.id}/posizione`,
+              `https://gestionale-cassoni.onrender.com/api/cassoni/${cassone.id}/posizione`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`

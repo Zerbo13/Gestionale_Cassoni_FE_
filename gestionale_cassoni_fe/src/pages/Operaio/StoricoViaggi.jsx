@@ -18,7 +18,7 @@ function StoricoViaggi() {
       return
     }
 
-    fetch('http://localhost:3001/api/viaggi/miei', {
+    fetch('https://gestionale-cassoni.onrender.com/api/viaggi/miei', {
       headers: {
         Authorization: `Bearer ${token}`
       }

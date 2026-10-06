@@ -31,16 +31,16 @@ function OperaioDashboard() {
 
   const caricaDati = () => {
     Promise.all([
-      fetch('http://localhost:3001/api/mezzi/attivi', {
+      fetch('https://gestionale-cassoni.onrender.com/api/mezzi/attivi', {
         headers
       }),
-      fetch('http://localhost:3001/api/cassoni', {
+      fetch('https://gestionale-cassoni.onrender.com/api/cassoni', {
         headers
       }),
-      fetch('http://localhost:3001/api/luoghi/attivi', {
+      fetch('https://gestionale-cassoni.onrender.com/api/luoghi/attivi', {
         headers
       }),
-      fetch('http://localhost:3001/api/viaggi/miei', {
+      fetch('https://gestionale-cassoni.onrender.com/api/viaggi/miei', {
         headers
       })
     ])
@@ -123,7 +123,7 @@ function OperaioDashboard() {
       return
     }
 
-    fetch('http://localhost:3001/api/viaggi/avvia', {
+    fetch('https://gestionale-cassoni.onrender.com/api/viaggi/avvia', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -167,7 +167,7 @@ function OperaioDashboard() {
     setMessaggio('')
 
     fetch(
-      `http://localhost:3001/api/viaggi/${viaggioInCorso.id}/chiudi`,
+      `https://gestionale-cassoni.onrender.com/api/viaggi/${viaggioInCorso.id}/chiudi`,
       {
         method: 'PUT',
         headers
@@ -201,7 +201,7 @@ function OperaioDashboard() {
     setMessaggio('')
 
     fetch(
-      `http://localhost:3001/api/viaggi/${viaggioInCorso.id}/annulla`,
+      `https://gestionale-cassoni.onrender.com/api/viaggi/${viaggioInCorso.id}/annulla`,
       {
         method: 'PUT',
         headers

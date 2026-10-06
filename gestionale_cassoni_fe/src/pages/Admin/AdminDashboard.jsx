@@ -18,7 +18,7 @@ function AdminDashboard() {
       return
     }
 
-    fetch('http://localhost:3001/api/viaggi/oggi', {
+    fetch('https://gestionale-cassoni.onrender.com/api/viaggi/oggi', {
       headers: {
         Authorization: `Bearer ${token}`
       }

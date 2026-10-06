@@ -15,7 +15,7 @@ function Login() {
     setErrore('')
     setLoading(true)
 
-    fetch('http://localhost:3001/auth/login', {
+    fetch('https://gestionale-cassoni.onrender.com/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
