@@ -6,6 +6,8 @@ import SearchSelect from '../../components/SearchSelect'
 
 import Navbar from '../../components/Navbar'
 
+import imageCompression from 'browser-image-compression'
+
 
 function OperaioDashboard() {
 
@@ -85,11 +87,13 @@ function OperaioDashboard() {
           throw new Error(
             'Errore durante il caricamento dei dati'
           )
+
         }
 
         return Promise.all(
           responses.map((response) => response.json())
         )
+
       })
 
       .then((data) => {
@@ -155,7 +159,9 @@ function OperaioDashboard() {
       navigate('/')
 
       return
+
     }
+
 
     caricaDati()
 
@@ -177,6 +183,7 @@ function OperaioDashboard() {
       setErrore('Seleziona un mezzo')
 
       return
+
     }
 
 
@@ -185,6 +192,7 @@ function OperaioDashboard() {
       setErrore('Seleziona un cassone')
 
       return
+
     }
 
 
@@ -193,6 +201,7 @@ function OperaioDashboard() {
       setErrore('Seleziona una destinazione')
 
       return
+
     }
 
 
@@ -233,6 +242,7 @@ function OperaioDashboard() {
           })
 
         }
+
 
         return response.json()
 
@@ -283,6 +293,7 @@ function OperaioDashboard() {
               })
 
             }
+
 
             return response.json()
 
@@ -361,6 +372,7 @@ function OperaioDashboard() {
 
         }
 
+
         return response.json()
 
       })
@@ -421,6 +433,7 @@ function OperaioDashboard() {
 
         }
 
+
         return response.json()
 
       })
@@ -447,6 +460,53 @@ function OperaioDashboard() {
 
   }
 
+
+  const gestisciFoto = (e) => {
+
+    if (
+      !e.target.files ||
+      e.target.files.length === 0
+    ) {
+
+      setFoto(null)
+
+      return
+
+    }
+
+
+    const fileOriginale = e.target.files[0]
+
+
+    const opzioni = {
+
+      maxSizeMB: 1,
+
+      maxWidthOrHeight: 1920,
+
+      useWebWorker: true
+
+    }
+
+
+    imageCompression(
+      fileOriginale,
+      opzioni
+    )
+
+      .then((fileCompresso) => {
+
+        setFoto(fileCompresso)
+
+      })
+
+      .catch(() => {
+
+        setFoto(fileOriginale)
+
+      })
+
+  }
 
 
   if (loading) {
@@ -622,10 +682,15 @@ function OperaioDashboard() {
                     <div className="mt-2">
 
                       <a
+
                         href={viaggioInCorso.fotoUrl}
+
                         target="_blank"
+
                         rel="noreferrer"
+
                         className="btn btn-outline-secondary btn-sm"
+
                       >
 
                         Visualizza foto
@@ -823,6 +888,7 @@ function OperaioDashboard() {
 
                 <div className="mb-3">
 
+
                   <label className="form-label">
 
                     Foto
@@ -840,22 +906,7 @@ function OperaioDashboard() {
 
                     capture="environment"
 
-                    onChange={(e) => {
-
-                      if (
-                        e.target.files &&
-                        e.target.files.length > 0
-                      ) {
-
-                        setFoto(e.target.files[0])
-
-                      } else {
-
-                        setFoto(null)
-
-                      }
-
-                    }}
+                    onChange={gestisciFoto}
 
                   />
 
@@ -865,6 +916,24 @@ function OperaioDashboard() {
                     Foto opzionale. Puoi scattarla oppure scegliere un'immagine.
 
                   </small>
+
+
+                  {foto && (
+
+                    <div className="mt-2">
+
+                      <small className="text-success">
+
+                        Foto pronta per il caricamento - circa{' '}
+
+                        {(foto.size / 1024 / 1024).toFixed(2)} MB
+
+                      </small>
+
+                    </div>
+
+                  )}
+
 
                 </div>
 
