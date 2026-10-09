@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
-import { FiPrinter } from "react-icons/fi";
-
+import { FiPrinter } from 'react-icons/fi'
 
 function PosizioniCassoni() {
   const navigate = useNavigate()
@@ -58,7 +57,8 @@ function PosizioniCassoni() {
                 return {
                   ...cassone,
                   posizioneAttuale: posizione.posizione,
-                  giorniFermo: posizione.giorniFermo
+                  giorniFermo: posizione.giorniFermo,
+                  note: posizione.note
                 }
               })
         )
@@ -90,13 +90,20 @@ function PosizioniCassoni() {
         cassone.codiceCassone
           ?.toLowerCase()
           .includes(testo) ||
+
         cassone.tipologia
           ?.toLowerCase()
           .includes(testo) ||
+
         cassone.colore
           ?.toLowerCase()
           .includes(testo) ||
+
         cassone.posizioneAttuale
+          ?.toLowerCase()
+          .includes(testo) ||
+
+        cassone.note
           ?.toLowerCase()
           .includes(testo)
       )
@@ -116,11 +123,13 @@ function PosizioniCassoni() {
   if (loading) {
     return (
       <div className="container py-5 text-center">
+
         <div className="spinner-border" />
 
         <p className="mt-3">
           Caricamento...
         </p>
+
       </div>
     )
   }
@@ -179,6 +188,7 @@ function PosizioniCassoni() {
           <div className="col-md-4">
 
             <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
@@ -190,6 +200,7 @@ function PosizioniCassoni() {
                 </h3>
 
               </div>
+
             </div>
 
           </div>
@@ -197,6 +208,7 @@ function PosizioniCassoni() {
           <div className="col-md-4">
 
             <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
@@ -208,6 +220,7 @@ function PosizioniCassoni() {
                 </h3>
 
               </div>
+
             </div>
 
           </div>
@@ -215,6 +228,7 @@ function PosizioniCassoni() {
           <div className="col-md-4">
 
             <div className="card shadow-sm border-0 h-100">
+
               <div className="card-body">
 
                 <small className="text-muted">
@@ -226,6 +240,7 @@ function PosizioniCassoni() {
                 </h3>
 
               </div>
+
             </div>
 
           </div>
@@ -251,7 +266,7 @@ function PosizioniCassoni() {
                   onChange={(e) =>
                     setRicerca(e.target.value)
                   }
-                  placeholder="Codice, tipologia, colore o posizione..."
+                  placeholder="Codice, tipologia, colore, posizione o note..."
                 />
 
               </div>
@@ -278,6 +293,7 @@ function PosizioniCassoni() {
                       <th>Colore</th>
                       <th>Misura</th>
                       <th>Posizione attuale</th>
+                      <th>Note ultimo viaggio</th>
                       <th>Giorni fermo</th>
                       <th>Stato</th>
                     </tr>
@@ -313,14 +329,18 @@ function PosizioniCassoni() {
                         </td>
 
                         <td>
+                          {cassone.note || '-'}
+                        </td>
+
+                        <td>
 
                           <span
                             className={
                               cassone.giorniFermo >= 5
                                 ? 'badge bg-danger'
                                 : cassone.giorniFermo >= 3
-                                ? 'badge bg-warning text-dark'
-                                : 'badge bg-success'
+                                  ? 'badge bg-warning text-dark'
+                                  : 'badge bg-success'
                             }
                           >
                             {cassone.giorniFermo}
@@ -364,14 +384,16 @@ function PosizioniCassoni() {
 
         <div className="d-flex justify-content-end mt-3 no-print">
 
-         <button
-                     className="btn btn-danger"
-                     onClick={stampa}
-                   >
-                     <FiPrinter />
-                     Salva /
-                      Stampa posizioni dei cassoni
-                   </button>
+          <button
+            className="btn btn-danger"
+            onClick={stampa}
+          >
+            <FiPrinter />
+
+            {' '}
+
+            Salva / Stampa posizioni dei cassoni
+          </button>
 
         </div>
 
