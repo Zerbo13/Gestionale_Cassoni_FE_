@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react'
-
 import { useNavigate } from 'react-router-dom'
-
 import SearchSelect from '../../components/SearchSelect'
-
 import Navbar from '../../components/Navbar'
-
 import imageCompression from 'browser-image-compression'
 
 
@@ -15,20 +11,14 @@ function OperaioDashboard() {
 
 
   const [mezzi, setMezzi] = useState([])
-
   const [cassoni, setCassoni] = useState([])
-
   const [luoghi, setLuoghi] = useState([])
 
 
   const [mezzoId, setMezzoId] = useState('')
-
   const [cassoneId, setCassoneId] = useState('')
-
   const [destinazioneId, setDestinazioneId] = useState('')
-
   const [note, setNote] = useState('')
-
   const [foto, setFoto] = useState(null)
 
 
@@ -36,16 +26,13 @@ function OperaioDashboard() {
 
 
   const [errore, setErrore] = useState('')
-
   const [messaggio, setMessaggio] = useState('')
-
   const [loading, setLoading] = useState(true)
 
 
   const token = localStorage.getItem('token')
 
   const nome = localStorage.getItem('nome')
-
   const cognome = localStorage.getItem('cognome')
 
 
@@ -99,11 +86,8 @@ function OperaioDashboard() {
       .then((data) => {
 
         const listaMezzi = data[0]
-
         const listaCassoni = data[1]
-
         const listaLuoghi = data[2]
-
         const listaViaggi = data[3]
 
 
@@ -174,7 +158,6 @@ function OperaioDashboard() {
 
 
     setErrore('')
-
     setMessaggio('')
 
 
@@ -312,13 +295,9 @@ function OperaioDashboard() {
       .then(() => {
 
         setMezzoId('')
-
         setCassoneId('')
-
         setDestinazioneId('')
-
         setNote('')
-
         setFoto(null)
 
 
@@ -342,14 +321,11 @@ function OperaioDashboard() {
   const chiudiViaggio = () => {
 
     setErrore('')
-
     setMessaggio('')
 
 
     fetch(
-
       `https://gestionale-cassoni.onrender.com/api/viaggi/${viaggioInCorso.id}/chiudi`,
-
       {
 
         method: 'PUT',
@@ -357,7 +333,6 @@ function OperaioDashboard() {
         headers
 
       }
-
     )
 
       .then((response) => {
@@ -403,14 +378,11 @@ function OperaioDashboard() {
   const annullaViaggio = () => {
 
     setErrore('')
-
     setMessaggio('')
 
 
     fetch(
-
       `https://gestionale-cassoni.onrender.com/api/viaggi/${viaggioInCorso.id}/annulla`,
-
       {
 
         method: 'PUT',
@@ -418,7 +390,6 @@ function OperaioDashboard() {
         headers
 
       }
-
     )
 
       .then((response) => {
@@ -524,6 +495,7 @@ function OperaioDashboard() {
 
         </p>
 
+
       </div>
 
     )
@@ -553,11 +525,8 @@ function OperaioDashboard() {
 
 
           <button
-
             className="btn btn-primary"
-
             onClick={() => navigate('/operaio')}
-
           >
 
             Avvia viaggio
@@ -566,13 +535,10 @@ function OperaioDashboard() {
 
 
           <button
-
             className="btn btn-outline-primary"
-
             onClick={() =>
               navigate('/operaio/storico')
             }
-
           >
 
             Storico
@@ -665,9 +631,7 @@ function OperaioDashboard() {
                   <strong>Note</strong>
 
                   <p>
-
                     {viaggioInCorso.note || 'Nessuna nota'}
-
                   </p>
 
                 </div>
@@ -682,15 +646,10 @@ function OperaioDashboard() {
                     <div className="mt-2">
 
                       <a
-
                         href={viaggioInCorso.fotoUrl}
-
                         target="_blank"
-
                         rel="noreferrer"
-
                         className="btn btn-outline-secondary btn-sm"
-
                       >
 
                         Visualizza foto
@@ -711,11 +670,8 @@ function OperaioDashboard() {
 
 
                 <button
-
                   className="btn btn-success"
-
                   onClick={chiudiViaggio}
-
                 >
 
                   Chiudi viaggio
@@ -724,11 +680,8 @@ function OperaioDashboard() {
 
 
                 <button
-
                   className="btn btn-danger"
-
                   onClick={annullaViaggio}
-
                 >
 
                   Annulla viaggio
@@ -775,19 +728,14 @@ function OperaioDashboard() {
 
 
                   <SearchSelect
-
                     items={mezzi}
-
                     placeholder="Cerca mezzo..."
-
                     getLabel={(mezzo) =>
                       `${mezzo.targa} - ${mezzo.modello}`
                     }
-
                     onSelect={(mezzo) =>
                       setMezzoId(mezzo.id)
                     }
-
                   />
 
 
@@ -805,19 +753,14 @@ function OperaioDashboard() {
 
 
                   <SearchSelect
-
                     items={cassoni}
-
                     placeholder="Cerca cassone..."
-
                     getLabel={(cassone) =>
                       `${cassone.codiceCassone} - ${cassone.colore} - ${cassone.misura}`
                     }
-
                     onSelect={(cassone) =>
                       setCassoneId(cassone.id)
                     }
-
                   />
 
 
@@ -835,19 +778,14 @@ function OperaioDashboard() {
 
 
                   <SearchSelect
-
                     items={luoghi}
-
                     placeholder="Cerca destinazione..."
-
                     getLabel={(luogo) =>
-                      `${luogo.nome} - ${luogo.indirizzo}`
+                      `${luogo.nome} - ${luogo.indirizzo}${luogo.tipologia ? ` - ${luogo.tipologia}` : ''}`
                     }
-
                     onSelect={(luogo) =>
                       setDestinazioneId(luogo.id)
                     }
-
                   />
 
 
@@ -865,21 +803,14 @@ function OperaioDashboard() {
 
 
                   <textarea
-
                     className="form-control"
-
                     rows="3"
-
                     maxLength="500"
-
                     value={note}
-
                     onChange={(e) =>
                       setNote(e.target.value)
                     }
-
                     placeholder="Note opzionali"
-
                   />
 
 
@@ -897,17 +828,11 @@ function OperaioDashboard() {
 
 
                   <input
-
                     type="file"
-
                     className="form-control"
-
                     accept="image/*"
-
                     capture="environment"
-
                     onChange={gestisciFoto}
-
                   />
 
 
@@ -939,11 +864,8 @@ function OperaioDashboard() {
 
 
                 <button
-
                   type="submit"
-
                   className="btn btn-primary"
-
                 >
 
                   Avvia viaggio
