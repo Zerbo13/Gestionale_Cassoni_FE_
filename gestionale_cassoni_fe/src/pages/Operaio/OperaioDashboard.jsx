@@ -45,21 +45,33 @@ function OperaioDashboard() {
 
     Promise.all([
 
-      fetch('https://gestionale-cassoni.onrender.com/api/mezzi/attivi', {
-        headers
-      }),
+      fetch(
+        'https://gestionale-cassoni.onrender.com/api/mezzi/attivi',
+        {
+          headers
+        }
+      ),
 
-      fetch('https://gestionale-cassoni.onrender.com/api/cassoni', {
-        headers
-      }),
+      fetch(
+        'https://gestionale-cassoni.onrender.com/api/cassoni',
+        {
+          headers
+        }
+      ),
 
-      fetch('https://gestionale-cassoni.onrender.com/api/luoghi/attivi', {
-        headers
-      }),
+      fetch(
+        'https://gestionale-cassoni.onrender.com/api/luoghi/attivi',
+        {
+          headers
+        }
+      ),
 
-      fetch('https://gestionale-cassoni.onrender.com/api/viaggi/miei', {
-        headers
-      })
+      fetch(
+        'https://gestionale-cassoni.onrender.com/api/viaggi/miei',
+        {
+          headers
+        }
+      )
 
     ])
 
@@ -78,7 +90,9 @@ function OperaioDashboard() {
         }
 
         return Promise.all(
-          responses.map((response) => response.json())
+          responses.map(
+            (response) => response.json()
+          )
         )
 
       })
@@ -96,7 +110,8 @@ function OperaioDashboard() {
 
         setCassoni(
           listaCassoni.filter(
-            (cassone) => cassone.attivo === true
+            (cassone) =>
+              cassone.attivo === true
           )
         )
 
@@ -104,14 +119,18 @@ function OperaioDashboard() {
         setLuoghi(listaLuoghi)
 
 
-        const viaggioAttivo = listaViaggi.find(
-          (viaggio) => viaggio.stato === 'IN_CORSO'
-        )
+        const viaggioAttivo =
+          listaViaggi.find(
+            (viaggio) =>
+              viaggio.stato === 'IN_CORSO'
+          )
 
 
         if (viaggioAttivo) {
 
-          setViaggioInCorso(viaggioAttivo)
+          setViaggioInCorso(
+            viaggioAttivo
+          )
 
         } else {
 
@@ -123,7 +142,9 @@ function OperaioDashboard() {
 
       .catch((error) => {
 
-        setErrore(error.message)
+        setErrore(
+          error.message
+        )
 
       })
 
@@ -163,7 +184,9 @@ function OperaioDashboard() {
 
     if (!mezzoId) {
 
-      setErrore('Seleziona un mezzo')
+      setErrore(
+        'Seleziona un mezzo'
+      )
 
       return
 
@@ -172,7 +195,9 @@ function OperaioDashboard() {
 
     if (!cassoneId) {
 
-      setErrore('Seleziona un cassone')
+      setErrore(
+        'Seleziona un cassone'
+      )
 
       return
 
@@ -181,48 +206,62 @@ function OperaioDashboard() {
 
     if (!destinazioneId) {
 
-      setErrore('Seleziona una destinazione')
+      setErrore(
+        'Seleziona una destinazione'
+      )
 
       return
 
     }
 
 
-    fetch('https://gestionale-cassoni.onrender.com/api/viaggi/avvia', {
+    fetch(
+      'https://gestionale-cassoni.onrender.com/api/viaggi/avvia',
+      {
 
-      method: 'POST',
+        method: 'POST',
 
-      headers: {
+        headers: {
 
-        Authorization: `Bearer ${token}`,
+          Authorization:
+            `Bearer ${token}`,
 
-        'Content-Type': 'application/json'
+          'Content-Type':
+            'application/json'
 
-      },
+        },
 
-      body: JSON.stringify({
+        body: JSON.stringify({
 
-        mezzoId: Number(mezzoId),
+          mezzoId:
+            Number(mezzoId),
 
-        cassoneId: Number(cassoneId),
+          cassoneId:
+            Number(cassoneId),
 
-        destinazioneId: Number(destinazioneId),
+          destinazioneId:
+            Number(destinazioneId),
 
-        note
+          note
 
-      })
+        })
 
-    })
+      }
+    )
 
       .then((response) => {
 
         if (!response.ok) {
 
-          return response.text().then((testo) => {
+          return response
+            .text()
+            .then((testo) => {
 
-            throw new Error(testo)
+              throw new Error(
+                testo
+              )
 
-          })
+            })
 
         }
 
@@ -233,7 +272,9 @@ function OperaioDashboard() {
 
       .then((data) => {
 
-        setViaggioInCorso(data)
+        setViaggioInCorso(
+          data
+        )
 
 
         if (!foto) {
@@ -243,9 +284,13 @@ function OperaioDashboard() {
         }
 
 
-        const formData = new FormData()
+        const formData =
+          new FormData()
 
-        formData.append('foto', foto)
+        formData.append(
+          'foto',
+          foto
+        )
 
 
         return fetch(
@@ -256,7 +301,8 @@ function OperaioDashboard() {
 
             headers: {
 
-              Authorization: `Bearer ${token}`
+              Authorization:
+                `Bearer ${token}`
 
             },
 
@@ -269,11 +315,15 @@ function OperaioDashboard() {
 
             if (!response.ok) {
 
-              return response.text().then((testo) => {
+              return response
+                .text()
+                .then((testo) => {
 
-                throw new Error(testo)
+                  throw new Error(
+                    testo
+                  )
 
-              })
+                })
 
             }
 
@@ -282,13 +332,17 @@ function OperaioDashboard() {
 
           })
 
-          .then((viaggioConFoto) => {
+          .then(
+            (viaggioConFoto) => {
 
-            setViaggioInCorso(viaggioConFoto)
+              setViaggioInCorso(
+                viaggioConFoto
+              )
 
-            return viaggioConFoto
+              return viaggioConFoto
 
-          })
+            }
+          )
 
       })
 
@@ -309,7 +363,9 @@ function OperaioDashboard() {
 
       .catch((error) => {
 
-        setErrore(error.message)
+        setErrore(
+          error.message
+        )
 
         caricaDati()
 
@@ -339,11 +395,15 @@ function OperaioDashboard() {
 
         if (!response.ok) {
 
-          return response.text().then((testo) => {
+          return response
+            .text()
+            .then((testo) => {
 
-            throw new Error(testo)
+              throw new Error(
+                testo
+              )
 
-          })
+            })
 
         }
 
@@ -368,7 +428,9 @@ function OperaioDashboard() {
 
       .catch((error) => {
 
-        setErrore(error.message)
+        setErrore(
+          error.message
+        )
 
       })
 
@@ -396,11 +458,15 @@ function OperaioDashboard() {
 
         if (!response.ok) {
 
-          return response.text().then((testo) => {
+          return response
+            .text()
+            .then((testo) => {
 
-            throw new Error(testo)
+              throw new Error(
+                testo
+              )
 
-          })
+            })
 
         }
 
@@ -425,7 +491,9 @@ function OperaioDashboard() {
 
       .catch((error) => {
 
-        setErrore(error.message)
+        setErrore(
+          error.message
+        )
 
       })
 
@@ -446,7 +514,8 @@ function OperaioDashboard() {
     }
 
 
-    const fileOriginale = e.target.files[0]
+    const fileOriginale =
+      e.target.files[0]
 
 
     const opzioni = {
@@ -467,13 +536,17 @@ function OperaioDashboard() {
 
       .then((fileCompresso) => {
 
-        setFoto(fileCompresso)
+        setFoto(
+          fileCompresso
+        )
 
       })
 
       .catch(() => {
 
-        setFoto(fileOriginale)
+        setFoto(
+          fileOriginale
+        )
 
       })
 
@@ -494,7 +567,6 @@ function OperaioDashboard() {
           Caricamento...
 
         </p>
-
 
       </div>
 
@@ -526,7 +598,9 @@ function OperaioDashboard() {
 
           <button
             className="btn btn-primary"
-            onClick={() => navigate('/operaio')}
+            onClick={() =>
+              navigate('/operaio')
+            }
           >
 
             Avvia viaggio
@@ -537,7 +611,9 @@ function OperaioDashboard() {
           <button
             className="btn btn-outline-primary"
             onClick={() =>
-              navigate('/operaio/storico')
+              navigate(
+                '/operaio/storico'
+              )
             }
           >
 
@@ -592,75 +668,105 @@ function OperaioDashboard() {
 
                 <div className="col-md-6">
 
-                  <strong>Mezzo</strong>
+                  <strong>
+                    Mezzo
+                  </strong>
 
-                  <p>{viaggioInCorso.mezzo}</p>
-
-                </div>
-
-
-                <div className="col-md-6">
-
-                  <strong>Cassone</strong>
-
-                  <p>{viaggioInCorso.cassone}</p>
+                  <p>
+                    {viaggioInCorso.mezzo}
+                  </p>
 
                 </div>
 
 
                 <div className="col-md-6">
 
-                  <strong>Partenza</strong>
+                  <strong>
+                    Cassone
+                  </strong>
 
-                  <p>{viaggioInCorso.partenza}</p>
+                  <p>
+                    {viaggioInCorso.cassone}
+                  </p>
 
                 </div>
 
 
                 <div className="col-md-6">
 
-                  <strong>Destinazione</strong>
+                  <strong>
+                    Partenza
+                  </strong>
 
-                  <p>{viaggioInCorso.destinazione}</p>
+                  <p>
+                    {viaggioInCorso.partenza}
+                  </p>
+
+                </div>
+
+
+                <div className="col-md-6">
+
+                  <strong>
+                    Destinazione
+                  </strong>
+
+                  <p>
+                    {viaggioInCorso.destinazione}
+                  </p>
 
                 </div>
 
 
                 <div className="col-12">
 
-                  <strong>Note</strong>
+                  <strong>
+                    Note
+                  </strong>
 
                   <p>
-                    {viaggioInCorso.note || 'Nessuna nota'}
+
+                    {
+                      viaggioInCorso.note ||
+                      'Nessuna nota'
+                    }
+
                   </p>
 
                 </div>
 
 
-                {viaggioInCorso.fotoUrl && (
+                {
+                  viaggioInCorso.fotoUrl &&
+                  (
 
-                  <div className="col-12">
+                    <div className="col-12">
 
-                    <strong>Foto</strong>
+                      <strong>
+                        Foto
+                      </strong>
 
-                    <div className="mt-2">
+                      <div className="mt-2">
 
-                      <a
-                        href={viaggioInCorso.fotoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn btn-outline-secondary btn-sm"
-                      >
+                        <a
+                          href={
+                            viaggioInCorso.fotoUrl
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn btn-outline-secondary btn-sm"
+                        >
 
-                        Visualizza foto
+                          Visualizza foto
 
-                      </a>
+                        </a>
+
+                      </div>
 
                     </div>
 
-                  </div>
-
-                )}
+                  )
+                }
 
 
               </div>
@@ -671,7 +777,9 @@ function OperaioDashboard() {
 
                 <button
                   className="btn btn-success"
-                  onClick={chiudiViaggio}
+                  onClick={
+                    chiudiViaggio
+                  }
                 >
 
                   Chiudi viaggio
@@ -681,7 +789,9 @@ function OperaioDashboard() {
 
                 <button
                   className="btn btn-danger"
-                  onClick={annullaViaggio}
+                  onClick={
+                    annullaViaggio
+                  }
                 >
 
                   Annulla viaggio
@@ -714,7 +824,11 @@ function OperaioDashboard() {
               </h4>
 
 
-              <form onSubmit={avviaViaggio}>
+              <form
+                onSubmit={
+                  avviaViaggio
+                }
+              >
 
 
                 <div className="mb-3">
@@ -734,7 +848,9 @@ function OperaioDashboard() {
                       `${mezzo.targa} - ${mezzo.modello}`
                     }
                     onSelect={(mezzo) =>
-                      setMezzoId(mezzo.id)
+                      setMezzoId(
+                        mezzo.id
+                      )
                     }
                   />
 
@@ -755,11 +871,78 @@ function OperaioDashboard() {
                   <SearchSelect
                     items={cassoni}
                     placeholder="Cerca cassone..."
-                    getLabel={(cassone) =>
-                      `${cassone.codiceCassone} - ${cassone.colore} - ${cassone.misura}`
-                    }
+
+                    getLabel={(cassone) => {
+
+                      const base =
+                        `${cassone.codiceCassone} - ${cassone.colore} - ${cassone.misura}`
+
+
+                      if (
+                        cassone.bloccato &&
+                        cassone.bloccatoDa
+                      ) {
+
+                        return (
+                          `${base} - RISERVATO A ` +
+                          `${cassone.bloccatoDa.nome} ` +
+                          `${cassone.bloccatoDa.cognome}`
+                        )
+
+                      }
+
+
+                      if (
+                        cassone.bloccato
+                      ) {
+
+                        return (
+                          `${base} - BLOCCATO`
+                        )
+
+                      }
+
+
+                      return base
+
+                    }}
+
+                    isDisabled={(cassone) => {
+
+                      if (
+                        !cassone.bloccato
+                      ) {
+
+                        return false
+
+                      }
+
+
+                      if (
+                        !cassone.bloccatoDa
+                      ) {
+
+                        return true
+
+                      }
+
+
+                      return !(
+                        cassone
+                          .bloccatoDa
+                          .nome === nome
+                        &&
+                        cassone
+                          .bloccatoDa
+                          .cognome === cognome
+                      )
+
+                    }}
+
                     onSelect={(cassone) =>
-                      setCassoneId(cassone.id)
+                      setCassoneId(
+                        cassone.id
+                      )
                     }
                   />
 
@@ -784,7 +967,9 @@ function OperaioDashboard() {
                       `${luogo.nome} - ${luogo.indirizzo}${luogo.tipologia ? ` - ${luogo.tipologia}` : ''}`
                     }
                     onSelect={(luogo) =>
-                      setDestinazioneId(luogo.id)
+                      setDestinazioneId(
+                        luogo.id
+                      )
                     }
                   />
 
@@ -808,7 +993,9 @@ function OperaioDashboard() {
                     maxLength="500"
                     value={note}
                     onChange={(e) =>
-                      setNote(e.target.value)
+                      setNote(
+                        e.target.value
+                      )
                     }
                     placeholder="Note opzionali"
                   />
@@ -832,7 +1019,9 @@ function OperaioDashboard() {
                     className="form-control"
                     accept="image/*"
                     capture="environment"
-                    onChange={gestisciFoto}
+                    onChange={
+                      gestisciFoto
+                    }
                   />
 
 
@@ -851,7 +1040,13 @@ function OperaioDashboard() {
 
                         Foto pronta per il caricamento - circa{' '}
 
-                        {(foto.size / 1024 / 1024).toFixed(2)} MB
+                        {
+                          (
+                            foto.size /
+                            1024 /
+                            1024
+                          ).toFixed(2)
+                        } MB
 
                       </small>
 

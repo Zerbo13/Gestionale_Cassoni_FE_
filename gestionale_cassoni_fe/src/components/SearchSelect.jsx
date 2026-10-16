@@ -4,7 +4,8 @@ function SearchSelect({
   items,
   placeholder,
   getLabel,
-  onSelect
+  onSelect,
+  isDisabled = () => false
 }) {
   const [ricerca, setRicerca] = useState('')
   const [aperto, setAperto] = useState(false)
@@ -43,8 +44,14 @@ function SearchSelect({
   }, [])
 
   const selezionaElemento = (item) => {
+
+    if (isDisabled(item)) {
+      return
+    }
+
     setRicerca(getLabel(item))
     setAperto(false)
+
     onSelect(item)
   }
 
@@ -53,6 +60,7 @@ function SearchSelect({
       className="position-relative"
       ref={contenitoreRef}
     >
+
       <input
         type="text"
         className="form-control"
@@ -66,6 +74,7 @@ function SearchSelect({
       />
 
       {aperto && (
+
         <div
           className="list-group position-absolute w-100 shadow"
           style={{
@@ -74,26 +83,52 @@ function SearchSelect({
             overflowY: 'auto'
           }}
         >
+
           {risultati.length > 0 ? (
-            risultati.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className="list-group-item list-group-item-action"
-                onClick={() =>
-                  selezionaElemento(item)
-                }
-              >
-                {getLabel(item)}
-              </button>
-            ))
+
+            risultati.map((item) => {
+
+              const disabilitato =
+                isDisabled(item)
+
+              return (
+
+                <button
+                  type="button"
+                  key={item.id}
+                  className={
+                    `list-group-item list-group-item-action ${
+                      disabilitato
+                        ? 'disabled text-muted'
+                        : ''
+                    }`
+                  }
+                  disabled={disabilitato}
+                  onClick={() =>
+                    selezionaElemento(item)
+                  }
+                >
+
+                  {getLabel(item)}
+
+                </button>
+
+              )
+
+            })
+
           ) : (
+
             <div className="list-group-item text-muted">
               Nessun risultato
             </div>
+
           )}
+
         </div>
+
       )}
+
     </div>
   )
 }
