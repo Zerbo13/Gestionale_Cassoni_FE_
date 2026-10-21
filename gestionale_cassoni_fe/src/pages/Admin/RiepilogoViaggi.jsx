@@ -1,31 +1,21 @@
 import { useEffect, useState } from 'react'
-
 import { useNavigate } from 'react-router-dom'
-
 import Navbar from '../../components/Navbar'
-
-import { FiPrinter } from "react-icons/fi";
-
+import { FiPrinter } from 'react-icons/fi'
 
 function RiepilogoViaggi() {
 
   const navigate = useNavigate()
 
-
   const [viaggi, setViaggi] = useState([])
-
   const [errore, setErrore] = useState('')
-
   const [loading, setLoading] = useState(true)
 
-
   const [ricerca, setRicerca] = useState('')
-
   const [filtroStato, setFiltroStato] = useState('TUTTI')
 
 
   const oggi = new Date()
-
 
   const dataOggi =
     oggi.getFullYear() +
@@ -42,17 +32,20 @@ function RiepilogoViaggi() {
   const token = localStorage.getItem('token')
 
 
+  // =====================================================
+  // CARICA VIAGGI
+  // =====================================================
+
   const caricaViaggi = () => {
 
-    fetch('https://gestionale-cassoni.onrender.com/api/viaggi', {
-
-      headers: {
-
-        Authorization: `Bearer ${token}`
-
+    fetch(
+      'https://gestionale-cassoni.onrender.com/api/viaggi',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
-
-    })
+    )
 
       .then((response) => {
 
@@ -65,7 +58,6 @@ function RiepilogoViaggi() {
           })
 
         }
-
 
         return response.json()
 
@@ -92,6 +84,10 @@ function RiepilogoViaggi() {
   }
 
 
+  // =====================================================
+  // CONTROLLO LOGIN
+  // =====================================================
+
   useEffect(() => {
 
     if (!token) {
@@ -102,34 +98,27 @@ function RiepilogoViaggi() {
 
     }
 
-
     caricaViaggi()
 
   }, [navigate, token])
 
 
+  // =====================================================
+  // CHIUDI VIAGGIO IN CORSO
+  // =====================================================
 
   const chiudiViaggio = (id) => {
 
     setErrore('')
 
-
     fetch(
-
       `https://gestionale-cassoni.onrender.com/api/viaggi/${id}/chiudi`,
-
       {
-
         method: 'PUT',
-
         headers: {
-
           Authorization: `Bearer ${token}`
-
         }
-
       }
-
     )
 
       .then((response) => {
@@ -143,7 +132,6 @@ function RiepilogoViaggi() {
           })
 
         }
-
 
         return response.json()
 
@@ -163,28 +151,31 @@ function RiepilogoViaggi() {
 
   }
 
+
+  // =====================================================
+  // ANNULLA VIAGGIO IN CORSO
+  // =====================================================
 
   const annullaViaggio = (id) => {
 
     setErrore('')
 
+    const conferma = window.confirm(
+      'Vuoi annullare questo viaggio?'
+    )
+
+    if (!conferma) {
+      return
+    }
 
     fetch(
-
       `https://gestionale-cassoni.onrender.com/api/viaggi/${id}/annulla`,
-
       {
-
         method: 'PUT',
-
         headers: {
-
           Authorization: `Bearer ${token}`
-
         }
-
       }
-
     )
 
       .then((response) => {
@@ -198,7 +189,6 @@ function RiepilogoViaggi() {
           })
 
         }
-
 
         return response.json()
 
@@ -218,6 +208,69 @@ function RiepilogoViaggi() {
 
   }
 
+
+  // =====================================================
+  // ANNULLA VIAGGIO COMPLETATO
+  // SOLO ADMIN
+  // =====================================================
+
+  const annullaViaggioCompletato = (id) => {
+
+    setErrore('')
+
+    const conferma = window.confirm(
+      'Vuoi annullare questo viaggio completato?\n\nIl cassone tornerà alla posizione precedente.'
+    )
+
+    if (!conferma) {
+      return
+    }
+
+
+    fetch(
+      `https://gestionale-cassoni.onrender.com/api/viaggi/${id}/annulla-completato-admin`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+
+      .then((response) => {
+
+        if (!response.ok) {
+
+          return response.text().then((testo) => {
+
+            throw new Error(testo)
+
+          })
+
+        }
+
+        return response.json()
+
+      })
+
+      .then(() => {
+
+        caricaViaggi()
+
+      })
+
+      .catch((error) => {
+
+        setErrore(error.message)
+
+      })
+
+  }
+
+
+  // =====================================================
+  // STAMPA
+  // =====================================================
 
   const stampa = () => {
 
@@ -226,29 +279,9 @@ function RiepilogoViaggi() {
   }
 
 
-  const creaUrlDownload = (fotoUrl) => {
-
-    if (!fotoUrl) {
-
-      return ''
-
-    }
-
-
-    if (fotoUrl.includes('/upload/')) {
-
-      return fotoUrl.replace(
-        '/upload/',
-        '/upload/fl_attachment/'
-      )
-
-    }
-
-
-    return fotoUrl
-
-  }
-
+  // =====================================================
+  // FILTRO PER GIORNO
+  // =====================================================
 
   const viaggiDelGiorno = viaggi.filter((viaggio) => {
 
@@ -259,21 +292,35 @@ function RiepilogoViaggi() {
     }
 
 
-    const dataViaggio = new Date(viaggio.dataOraInizio)
+    const dataViaggio =
+      new Date(viaggio.dataOraInizio)
 
 
     const dataFormattata =
+
       dataViaggio.getFullYear() +
+
       '-' +
-      String(dataViaggio.getMonth() + 1).padStart(2, '0') +
+
+      String(
+        dataViaggio.getMonth() + 1
+      ).padStart(2, '0') +
+
       '-' +
-      String(dataViaggio.getDate()).padStart(2, '0')
+
+      String(
+        dataViaggio.getDate()
+      ).padStart(2, '0')
 
 
     return dataFormattata === dataSelezionata
 
   })
 
+
+  // =====================================================
+  // FILTRI
+  // =====================================================
 
   const viaggiFiltrati = viaggiDelGiorno
 
@@ -285,27 +332,45 @@ function RiepilogoViaggi() {
 
       }
 
-
       return viaggio.stato === filtroStato
 
     })
 
     .filter((viaggio) => {
 
-      const testo = ricerca.toLowerCase()
+      const testo =
+        ricerca.toLowerCase()
 
 
       return (
 
-        viaggio.operaio?.toLowerCase().includes(testo) ||
+        viaggio.operaio
+          ?.toLowerCase()
+          .includes(testo)
 
-        viaggio.mezzo?.toLowerCase().includes(testo) ||
+        ||
 
-        viaggio.cassone?.toLowerCase().includes(testo) ||
+        viaggio.mezzo
+          ?.toLowerCase()
+          .includes(testo)
 
-        viaggio.partenza?.toLowerCase().includes(testo) ||
+        ||
 
-        viaggio.destinazione?.toLowerCase().includes(testo)
+        viaggio.cassone
+          ?.toLowerCase()
+          .includes(testo)
+
+        ||
+
+        viaggio.partenza
+          ?.toLowerCase()
+          .includes(testo)
+
+        ||
+
+        viaggio.destinazione
+          ?.toLowerCase()
+          .includes(testo)
 
       )
 
@@ -324,35 +389,51 @@ function RiepilogoViaggi() {
     })
 
 
+  // =====================================================
+  // CONTATORI
+  // =====================================================
+
   const viaggiInCorso = viaggiDelGiorno.filter(
 
-    (viaggio) => viaggio.stato === 'IN_CORSO'
+    (viaggio) =>
+      viaggio.stato === 'IN_CORSO'
 
   ).length
 
 
   const viaggiCompletati = viaggiDelGiorno.filter(
 
-    (viaggio) => viaggio.stato === 'COMPLETATO'
+    (viaggio) =>
+      viaggio.stato === 'COMPLETATO'
 
   ).length
 
 
   const viaggiAnnullati = viaggiDelGiorno.filter(
 
-    (viaggio) => viaggio.stato === 'ANNULLATO'
+    (viaggio) =>
+      viaggio.stato === 'ANNULLATO'
 
   ).length
 
 
-  const dataStampabile = dataSelezionata
+  // =====================================================
+  // DATA STAMPABILE
+  // =====================================================
 
-    ? new Date(
-        `${dataSelezionata}T00:00:00`
-      ).toLocaleDateString('it-IT')
+  const dataStampabile =
+    dataSelezionata
 
-    : '-'
+      ? new Date(
+          `${dataSelezionata}T00:00:00`
+        ).toLocaleDateString('it-IT')
 
+      : '-'
+
+
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (loading) {
 
@@ -362,11 +443,8 @@ function RiepilogoViaggi() {
 
         <div className="spinner-border" />
 
-
         <p className="mt-3">
-
           Caricamento...
-
         </p>
 
       </div>
@@ -387,87 +465,80 @@ function RiepilogoViaggi() {
       <main className="container py-4">
 
 
+        {/* ============================================= */}
+        {/* NAVIGAZIONE ADMIN */}
+        {/* ============================================= */}
+
         <div className="d-flex flex-wrap gap-2 mb-4 no-print">
 
 
           <button
-
             className="btn btn-outline-dark"
-
-            onClick={() => navigate('/admin')}
-
+            onClick={() =>
+              navigate('/admin')
+            }
           >
-
             📊 Dashboard
-
           </button>
 
 
           <button
-
             className="btn btn-primary"
-
-            onClick={() => navigate('/admin/viaggi')}
-
+            onClick={() =>
+              navigate('/admin/viaggi')
+            }
           >
-
             🧾 Scheda giornaliera
-
           </button>
 
 
           <button
-
             className="btn btn-outline-danger"
-
-            onClick={() => navigate('/admin/posizioni')}
-
+            onClick={() =>
+              navigate('/admin/posizioni')
+            }
           >
-
             📍 Posizione cassoni
-
           </button>
 
 
           <button
-
             className="btn btn-outline-warning"
-
-            onClick={() => navigate('/admin/anagrafiche')}
-
+            onClick={() =>
+              navigate('/admin/anagrafiche')
+            }
           >
-
             📋 Anagrafiche
-
           </button>
 
 
         </div>
 
 
-        <div className="d-flex justify-content-between align-items-center mb-4">
+        {/* ============================================= */}
+        {/* TITOLO */}
+        {/* ============================================= */}
 
+        <div className="d-flex justify-content-between align-items-center mb-4">
 
           <div>
 
             <h1 className="h3 mb-1">
-
               Scheda giornaliera
-
             </h1>
 
-
             <p className="text-muted mb-0">
-
               Data: {dataStampabile}
-
             </p>
 
           </div>
 
-
         </div>
 
+
+        {/* ============================================= */}
+        {/* ERRORI */}
+        {/* ============================================= */}
 
         {errore && (
 
@@ -480,133 +551,93 @@ function RiepilogoViaggi() {
         )}
 
 
+        {/* ============================================= */}
+        {/* CONTATORI */}
+        {/* ============================================= */}
+
         <div className="row g-3 mb-4">
 
 
           <div className="col-md-3">
 
-
             <div className="card shadow-sm border-0 h-100">
-
 
               <div className="card-body">
 
-
                 <small className="text-muted">
-
                   Viaggi del giorno
-
                 </small>
 
-
                 <h3 className="mb-0">
-
                   {viaggiDelGiorno.length}
-
                 </h3>
-
 
               </div>
 
-
             </div>
-
 
           </div>
 
 
           <div className="col-md-3">
 
-
             <div className="card shadow-sm border-0 h-100">
-
 
               <div className="card-body">
 
-
                 <small className="text-muted">
-
                   In corso
-
                 </small>
 
-
                 <h3 className="mb-0">
-
                   {viaggiInCorso}
-
                 </h3>
-
 
               </div>
 
-
             </div>
-
 
           </div>
 
 
           <div className="col-md-3">
 
-
             <div className="card shadow-sm border-0 h-100">
-
 
               <div className="card-body">
 
-
                 <small className="text-muted">
-
                   Completati
-
                 </small>
 
-
                 <h3 className="mb-0">
-
                   {viaggiCompletati}
-
                 </h3>
-
 
               </div>
 
-
             </div>
-
 
           </div>
 
 
           <div className="col-md-3">
 
-
             <div className="card shadow-sm border-0 h-100">
-
 
               <div className="card-body">
 
-
                 <small className="text-muted">
-
                   Annullati
-
                 </small>
 
-
                 <h3 className="mb-0">
-
                   {viaggiAnnullati}
-
                 </h3>
-
 
               </div>
 
-
             </div>
-
 
           </div>
 
@@ -614,126 +645,94 @@ function RiepilogoViaggi() {
         </div>
 
 
-        <div className="card shadow-sm">
+        {/* ============================================= */}
+        {/* TABELLA */}
+        {/* ============================================= */}
 
+        <div className="card shadow-sm">
 
           <div className="card-body">
 
+
+            {/* FILTRI */}
 
             <div className="row g-3 mb-4 no-print">
 
 
               <div className="col-md-3">
 
-
                 <label className="form-label">
-
                   Giorno
-
                 </label>
 
-
                 <input
-
                   type="date"
-
                   className="form-control"
-
                   value={dataSelezionata}
-
                   onChange={(e) =>
-                    setDataSelezionata(e.target.value)
+                    setDataSelezionata(
+                      e.target.value
+                    )
                   }
-
                 />
-
 
               </div>
 
 
               <div className="col-md-6">
 
-
                 <label className="form-label">
-
                   Cerca
-
                 </label>
 
-
                 <input
-
                   type="text"
-
                   className="form-control"
-
                   value={ricerca}
-
                   onChange={(e) =>
-                    setRicerca(e.target.value)
+                    setRicerca(
+                      e.target.value
+                    )
                   }
-
                   placeholder="Operaio, mezzo, cassone, partenza o destinazione"
-
                 />
-
 
               </div>
 
 
               <div className="col-md-3">
 
-
                 <label className="form-label">
-
                   Stato
-
                 </label>
 
-
                 <select
-
                   className="form-select"
-
                   value={filtroStato}
-
                   onChange={(e) =>
-                    setFiltroStato(e.target.value)
+                    setFiltroStato(
+                      e.target.value
+                    )
                   }
-
                 >
 
-
                   <option value="TUTTI">
-
                     Tutti
-
                   </option>
-
 
                   <option value="IN_CORSO">
-
                     In corso
-
                   </option>
-
 
                   <option value="COMPLETATO">
-
                     Completati
-
                   </option>
-
 
                   <option value="ANNULLATO">
-
                     Annullati
-
                   </option>
 
-
                 </select>
-
 
               </div>
 
@@ -741,15 +740,15 @@ function RiepilogoViaggi() {
             </div>
 
 
-            {viaggiFiltrati.length === 0 ? (
+            {/* NESSUN VIAGGIO */}
 
+            {viaggiFiltrati.length === 0 ? (
 
               <p className="text-muted mb-0">
 
                 Nessun viaggio trovato per il giorno selezionato.
 
               </p>
-
 
             ) : (
 
@@ -761,7 +760,6 @@ function RiepilogoViaggi() {
 
 
                   <thead>
-
 
                     <tr>
 
@@ -779,17 +777,11 @@ function RiepilogoViaggi() {
 
                       <th>Stato</th>
 
-                      <th>Foto</th>
-
-
                       <th className="no-print">
-
                         Azioni
-
                       </th>
 
                     </tr>
-
 
                   </thead>
 
@@ -797,206 +789,178 @@ function RiepilogoViaggi() {
                   <tbody>
 
 
-                    {viaggiFiltrati.map((viaggio) => (
+                    {viaggiFiltrati.map(
+                      (viaggio) => (
 
 
-                      <tr key={viaggio.id}>
+                        <tr key={viaggio.id}>
 
 
-                        <td>
+                          {/* ORA */}
 
-                          {viaggio.dataOraInizio
+                          <td>
 
-                            ? new Date(
-                                viaggio.dataOraInizio
-                              ).toLocaleTimeString(
-                                'it-IT',
-                                {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                }
-                              )
+                            {viaggio.dataOraInizio
 
-                            : '-'}
+                              ? new Date(
+                                  viaggio.dataOraInizio
+                                ).toLocaleTimeString(
+                                  'it-IT',
+                                  {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  }
+                                )
 
-                        </td>
-
-
-                        <td>
-
-                          {viaggio.operaio}
-
-                        </td>
-
-
-                        <td>
-
-                          {viaggio.mezzo}
-
-                        </td>
-
-
-                        <td>
-
-                          {viaggio.cassone}
-
-                        </td>
-
-
-                        <td>
-
-                          {viaggio.partenza}
-
-                        </td>
-
-
-                        <td>
-
-                          {viaggio.destinazione}
-
-                        </td>
-
-
-                        <td>
-
-
-                          <span
-
-                            className={
-
-                              viaggio.stato === 'COMPLETATO'
-
-                                ? 'badge bg-success'
-
-                                : viaggio.stato === 'ANNULLATO'
-
-                                ? 'badge bg-danger'
-
-                                : 'badge bg-warning text-dark'
-
+                              : '-'
                             }
 
-                          >
-
-                            {viaggio.stato}
-
-                          </span>
+                          </td>
 
 
-                        </td>
+                          {/* OPERAIO */}
+
+                          <td>
+                            {viaggio.operaio}
+                          </td>
 
 
-                        <td>
+                          {/* MEZZO */}
 
-                          {viaggio.fotoUrl ? (
-
-                            <div className="d-flex flex-column gap-1">
-
-
-                              <a
-
-                                href={viaggio.fotoUrl}
-
-                                target="_blank"
-
-                                rel="noreferrer"
-
-                                className="btn btn-outline-primary btn-sm no-print"
-
-                              >
-
-                                Visualizza
-
-                              </a>
+                          <td>
+                            {viaggio.mezzo}
+                          </td>
 
 
-                              <a
+                          {/* CASSONE */}
 
-                                href={creaUrlDownload(viaggio.fotoUrl)}
-
-                                className="btn btn-outline-success btn-sm no-print"
-
-                              >
-
-                                Scarica
-
-                              </a>
+                          <td>
+                            {viaggio.cassone}
+                          </td>
 
 
-                              <span className="d-none print-foto">
+                          {/* PARTENZA */}
 
-                                Foto disponibile
-
-                              </span>
-
-
-                            </div>
-
-                          ) : (
-
-                            '-'
-
-                          )}
-
-                        </td>
+                          <td>
+                            {viaggio.partenza}
+                          </td>
 
 
-                        <td className="no-print">
+                          {/* DESTINAZIONE */}
+
+                          <td>
+                            {viaggio.destinazione}
+                          </td>
 
 
-                          {viaggio.stato === 'IN_CORSO' ? (
+                          {/* STATO */}
+
+                          <td>
+
+                            <span
+                              className={
+
+                                viaggio.stato ===
+                                'COMPLETATO'
+
+                                  ? 'badge bg-success'
+
+                                  : viaggio.stato ===
+                                    'ANNULLATO'
+
+                                  ? 'badge bg-danger'
+
+                                  : 'badge bg-warning text-dark'
+
+                              }
+                            >
+
+                              {viaggio.stato}
+
+                            </span>
+
+                          </td>
 
 
-                            <div className="d-flex gap-2">
+                          {/* ================================= */}
+                          {/* AZIONI ADMIN */}
+                          {/* ================================= */}
 
+                          <td className="no-print">
+
+
+                            {/* VIAGGIO IN CORSO */}
+
+                            {viaggio.stato ===
+                              'IN_CORSO' && (
+
+                              <div className="d-flex gap-2">
+
+                                <button
+                                  className="btn btn-success btn-sm"
+                                  onClick={() =>
+                                    chiudiViaggio(
+                                      viaggio.id
+                                    )
+                                  }
+                                >
+                                  Chiudi
+                                </button>
+
+
+                                <button
+                                  className="btn btn-danger btn-sm"
+                                  onClick={() =>
+                                    annullaViaggio(
+                                      viaggio.id
+                                    )
+                                  }
+                                >
+                                  Annulla
+                                </button>
+
+                              </div>
+
+                            )}
+
+
+                            {/* VIAGGIO COMPLETATO */}
+
+                            {viaggio.stato ===
+                              'COMPLETATO' && (
 
                               <button
-
-                                className="btn btn-success btn-sm"
-
+                                className="btn btn-outline-danger btn-sm"
                                 onClick={() =>
-                                  chiudiViaggio(viaggio.id)
+                                  annullaViaggioCompletato(
+                                    viaggio.id
+                                  )
                                 }
-
                               >
-
-                                Chiudi
-
+                                Annulla viaggio
                               </button>
 
-
-                              <button
-
-                                className="btn btn-danger btn-sm"
-
-                                onClick={() =>
-                                  annullaViaggio(viaggio.id)
-                                }
-
-                              >
-
-                                Annulla
-
-                              </button>
+                            )}
 
 
-                            </div>
+                            {/* VIAGGIO GIÀ ANNULLATO */}
+
+                            {viaggio.stato ===
+                              'ANNULLATO' && (
+
+                              '-'
+
+                            )}
 
 
-                          ) : (
-
-                            '-'
-
-                          )}
+                          </td>
 
 
-                        </td>
+                        </tr>
 
 
-                      </tr>
-
-
-                    ))}
+                      )
+                    )}
 
 
                   </tbody>
@@ -1013,24 +977,25 @@ function RiepilogoViaggi() {
 
           </div>
 
-
         </div>
 
+
+        {/* ============================================= */}
+        {/* STAMPA */}
+        {/* ============================================= */}
 
         <div className="d-flex justify-content-end mt-3 no-print">
 
 
           <button
-
             className="btn btn-danger"
-
             onClick={stampa}
-
           >
 
             <FiPrinter />
 
-            Salva / Stampa scheda giornaliera
+            {' '}
+            Salva / Stampa posizioni dei cassoni
 
           </button>
 
@@ -1046,6 +1011,5 @@ function RiepilogoViaggi() {
   )
 
 }
-
 
 export default RiepilogoViaggi
